@@ -24,12 +24,15 @@ class MainScene extends Phaser.Scene {
 		// object destructuring
 		const { height, width } = this.scale;
 
-		let player = this.add.sprite(
+		let player = this.physics.add.sprite(
 			width / 2,
 			height / 2,
 			"robot",
 			"character_robot_idle.png"
 		);
+
+		player.setCollideWorldBounds(true);
+		player.setBounce(0.5);
 
 		// single frame
 		player.anims.create({
@@ -67,7 +70,7 @@ class MainScene extends Phaser.Scene {
 			repeat: -1, // infinite repeat
 		});
 
-		player.play(PLAYER_ANIMS.jump);
+		player.play(PLAYER_ANIMS.walk);
 	}
 
 	update() {}
@@ -79,6 +82,12 @@ const config = {
 	width: 400,
 	height: 400,
 	scene: [MainScene],
+	physics: {
+		default: "arcade",
+		arcade: {
+			gravity: { y: 300 },
+		},
+	},
 };
 
 const game = new Phaser.Game(config);
