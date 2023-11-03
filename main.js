@@ -6,6 +6,7 @@ const PLAYER_ANIMS = {
 	walk: "walk",
 	run: "run",
 	jump: "jump",
+	cheer: "cheer",
 };
 
 class MainScene extends Phaser.Scene {
@@ -69,8 +70,19 @@ class MainScene extends Phaser.Scene {
 			frameRate: 10, // frames per second
 			repeat: -1, // infinite repeat
 		});
+		player.anims.create({
+			key: PLAYER_ANIMS.cheer,
+			frames: player.anims.generateFrameNames("robot", {
+				start: 0,
+				end: 1,
+				prefix: "character_robot_cheer",
+				suffix: ".png",
+			}),
+			frameRate: 5, // frames per second
+			repeat: -1, // infinite repeat
+		});
 
-		player.play(PLAYER_ANIMS.walk);
+		player.play(PLAYER_ANIMS.run);
 	}
 
 	update() {}
