@@ -16,6 +16,7 @@ class MainScene extends Phaser.Scene {
 		super("main-scene");
 
 		this.map;
+		this.cursors;
 	}
 
 	preload() {
@@ -112,6 +113,16 @@ class MainScene extends Phaser.Scene {
 		});
 
 		player.play(PLAYER_ANIMS.run);
+
+		this.cursors = this.input.keyboard.addKeys({
+			left: Phaser.Input.Keyboard.KeyCodes.A,
+			leftArrow: Phaser.Input.Keyboard.KeyCodes.LEFT,
+			right: Phaser.Input.Keyboard.KeyCodes.D,
+			rightArrow: Phaser.Input.Keyboard.KeyCodes.RIGHT,
+			jump: Phaser.Input.Keyboard.KeyCodes.SPACE,
+			upArrow: Phaser.Input.Keyboard.KeyCodes.UP,
+			up: Phaser.Input.Keyboard.KeyCodes.W,
+		});
 	}
 
 	update() {}
