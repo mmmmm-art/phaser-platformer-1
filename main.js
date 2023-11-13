@@ -15,6 +15,7 @@ class MainScene extends Phaser.Scene {
 	constructor() {
 		super("main-scene");
 
+		this.player;
 		this.map;
 		this.cursors;
 	}
@@ -55,31 +56,31 @@ class MainScene extends Phaser.Scene {
 			0
 		);
 
-		let player = this.physics.add.sprite(
+		this.player = this.physics.add.sprite(
 			width / 2,
 			height / 2,
 			"robot",
 			"character_robot_idle.png"
 		);
 
-		player.setCollideWorldBounds(true);
-		player.setBounce(0.5);
+		this.player.setCollideWorldBounds(true);
+		this.player.setBounce(0.5);
 
 		// single frame
-		player.anims.create({
+		this.player.anims.create({
 			key: PLAYER_ANIMS.idle,
 			frames: [{ key: "robot", frame: "character_robot_idle.png" }],
 		});
 
-		player.anims.create({
+		this.player.anims.create({
 			key: PLAYER_ANIMS.jump,
 			frames: [{ key: "robot", frame: "character_robot_jump.png" }],
 		});
 
 		// multiple frames
-		player.anims.create({
+		this.player.anims.create({
 			key: PLAYER_ANIMS.run,
-			frames: player.anims.generateFrameNames("robot", {
+			frames: this.player.anims.generateFrameNames("robot", {
 				start: 0,
 				end: 2,
 				prefix: "character_robot_run",
@@ -89,9 +90,9 @@ class MainScene extends Phaser.Scene {
 			repeat: -1, // infinite repeat
 		});
 
-		player.anims.create({
+		this.player.anims.create({
 			key: PLAYER_ANIMS.walk,
-			frames: player.anims.generateFrameNames("robot", {
+			frames: this.player.anims.generateFrameNames("robot", {
 				start: 0,
 				end: 7,
 				prefix: "character_robot_walk",
@@ -100,9 +101,9 @@ class MainScene extends Phaser.Scene {
 			frameRate: 10, // frames per second
 			repeat: -1, // infinite repeat
 		});
-		player.anims.create({
+		this.player.anims.create({
 			key: PLAYER_ANIMS.cheer,
-			frames: player.anims.generateFrameNames("robot", {
+			frames: this.player.anims.generateFrameNames("robot", {
 				start: 0,
 				end: 1,
 				prefix: "character_robot_cheer",
@@ -112,7 +113,7 @@ class MainScene extends Phaser.Scene {
 			repeat: -1, // infinite repeat
 		});
 
-		player.play(PLAYER_ANIMS.run);
+		this.player.play(PLAYER_ANIMS.run);
 
 		this.cursors = this.input.keyboard.addKeys({
 			left: Phaser.Input.Keyboard.KeyCodes.A,
@@ -125,7 +126,24 @@ class MainScene extends Phaser.Scene {
 		});
 	}
 
-	update() {}
+	update() {
+		if (this.cursors.left.isDown || this.cursors.leftArrow.isDown) {
+			this.player.setVelocityX(-150);
+		} else if (this.cursors.right.isDown || this.cursors.rightArrow.isDown) {
+			this.player.setVelocityX(150);
+		} else {
+			this.player.setVelocityX(0);
+		}
+
+		if (
+			(this.cursors.up.isDown ||
+				this.cursors.upArrow.isDown ||
+				this.cursors.jump.isDown) &&
+			this.player.body.onFloor()
+		) {
+			this.player.setVelocityY(-150);
+		}
+	}
 }
 
 /** @type {Phaser.Types.Core.GameConfig} */
