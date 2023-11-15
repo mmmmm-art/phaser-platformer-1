@@ -9,6 +9,7 @@ const PLAYER_ANIMS = {
 	run: "run",
 	jump: "jump",
 	cheer: "cheer",
+	fall: "fall",
 };
 
 class MainScene extends Phaser.Scene {
@@ -70,6 +71,11 @@ class MainScene extends Phaser.Scene {
 		this.player.anims.create({
 			key: PLAYER_ANIMS.idle,
 			frames: [{ key: "robot", frame: "character_robot_idle.png" }],
+		});
+
+		this.player.anims.create({
+			key: PLAYER_ANIMS.fall,
+			frames: [{ key: "robot", frame: "character_robot_fall.png" }],
 		});
 
 		this.player.anims.create({
@@ -141,7 +147,27 @@ class MainScene extends Phaser.Scene {
 				this.cursors.jump.isDown) &&
 			this.player.body.onFloor()
 		) {
-			this.player.setVelocityY(-150);
+			this.player.setVelocityY(-300);
+		}
+
+		// let x = this.player.body.velocity.x;
+		// let y = this.player.body.velocity.y;
+		let { x, y } = this.player.body.velocity;
+
+		this.player.flipX = x < 0;
+
+		if (this.player.body.onFloor()) {
+			if (x === 0) {
+				this.player.play(PLAYER_ANIMS.idle);
+			} else {
+				this.player.play(PLAYER_ANIMS.run, true);
+			}
+		} else {
+			if (y < 0) {
+				this.player.play(PLAYER_ANIMS.jump, true);
+			} else {
+				this.player.play(PLAYER_ANIMS.fall, true);
+			}
 		}
 	}
 }
