@@ -56,6 +56,7 @@ class MainScene extends Phaser.Scene {
 			0,
 			0
 		);
+		platformLayer.setCollisionByProperty({ collides: true });
 
 		this.player = this.physics.add.sprite(
 			width / 2,
@@ -64,8 +65,14 @@ class MainScene extends Phaser.Scene {
 			"character_robot_idle.png"
 		);
 
-		this.player.setCollideWorldBounds(true);
-		this.player.setBounce(0.5);
+		this.physics.add.collider(this.player, platformLayer);
+
+		this.player
+			.setCollideWorldBounds(true)
+			.setBounce(0.2)
+			.setSize(TILE_SIZE * 2, TILE_SIZE * 4.5)
+			.setScale(0.5)
+			.setOffset(TILE_SIZE * 1.7, TILE_SIZE * 2.6);
 
 		// single frame
 		this.player.anims.create({
@@ -150,8 +157,6 @@ class MainScene extends Phaser.Scene {
 			this.player.setVelocityY(-300);
 		}
 
-		// let x = this.player.body.velocity.x;
-		// let y = this.player.body.velocity.y;
 		let { x, y } = this.player.body.velocity;
 
 		this.player.flipX = x < 0;
@@ -182,6 +187,7 @@ const config = {
 		default: "arcade",
 		arcade: {
 			gravity: { y: 300 },
+			debug: true,
 		},
 	},
 };
