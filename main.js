@@ -19,6 +19,7 @@ class MainScene extends Phaser.Scene {
 		this.player;
 		this.map;
 		this.cursors;
+		this.coins;
 	}
 
 	preload() {
@@ -30,6 +31,8 @@ class MainScene extends Phaser.Scene {
 		this.load.image("stone", "tilesets/stone.png");
 
 		this.load.tilemapTiledJSON("map", "tilesets/map.json");
+
+		this.load.image("coin", "coin.png");
 	}
 
 	create() {
@@ -57,6 +60,15 @@ class MainScene extends Phaser.Scene {
 			0
 		);
 		platformLayer.setCollisionByProperty({ collides: true });
+
+		this.coins = this.physics.add.group({
+			key: "coin",
+			quantity: 12,
+			setXY: { x: 18 * 4, y: 0, stepX: 18 * 3 },
+			setScale: { x: 0.25, y: 0.25 },
+		});
+
+		this.physics.add.collider(this.coins, platformLayer);
 
 		this.player = this.physics.add.sprite(
 			width / 2,
