@@ -68,13 +68,32 @@ class MainScene extends Phaser.Scene {
 			setScale: { x: 0.25, y: 0.25 },
 		});
 
+		this.coins.children.iterate((coin) => {
+			coin
+				.setCircle(40)
+				.setCollideWorldBounds(true)
+				.setBounce(Phaser.Math.FloatBetween(0.4, 0.8))
+				.setVelocityX(Phaser.Math.FloatBetween(-10, 10));
+		});
+
 		this.physics.add.collider(this.coins, platformLayer);
+		this.physics.add.collider(this.coins, this.coins);
+
+
 
 		this.player = this.physics.add.sprite(
 			width / 2,
 			height / 2,
 			"robot",
 			"character_robot_idle.png"
+		);
+
+		this.physics.add.overlap(
+			this.player,
+			this.coins,
+			this.collectCoin,
+			undefined,
+			this
 		);
 
 		this.physics.add.collider(this.player, platformLayer);
@@ -182,10 +201,15 @@ class MainScene extends Phaser.Scene {
 		} else {
 			if (y < 0) {
 				this.player.play(PLAYER_ANIMS.jump, true);
-			} else {
+			} else {	
 				this.player.play(PLAYER_ANIMS.fall, true);
 			}
 		}
+	}
+
+	collectCoin(player, coin) {
+		coin.disableBody(true, true);
+
 	}
 }
 
