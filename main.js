@@ -20,6 +20,10 @@ class MainScene extends Phaser.Scene {
 		this.map;
 		this.cursors;
 		this.coins;
+
+		this.coinNoise;
+		this.jumpNoise;
+		this.music;
 	}
 
 	preload() {
@@ -33,9 +37,24 @@ class MainScene extends Phaser.Scene {
 		this.load.tilemapTiledJSON("map", "tilesets/map.json");
 
 		this.load.image("coin", "coin.png");
+
+		this.load.audio("coin-noise", "coin.mp3");
+		this.load.audio("jump-noise", "jump.wav");
+		this.load.audio("music", "background-music.mp3");
 	}
 
 	create() {
+		this.coinNoise = this.sound.add("coin-noise");
+		this.jumpNoise = this.sound.add("jump-noise", {
+			volume: 0.5,
+		});
+		this.music = this.sound.add("music", {
+			loop: true,
+			volume: 0.5,
+		});
+
+		this.music.play();
+
 		// object destructuring
 		const { height, width } = this.scale;
 
@@ -78,8 +97,6 @@ class MainScene extends Phaser.Scene {
 
 		this.physics.add.collider(this.coins, platformLayer);
 		this.physics.add.collider(this.coins, this.coins);
-
-
 
 		this.player = this.physics.add.sprite(
 			width / 2,
@@ -185,6 +202,7 @@ class MainScene extends Phaser.Scene {
 				this.cursors.jump.isDown) &&
 			this.player.body.onFloor()
 		) {
+			this.jumpNoise.play();
 			this.player.setVelocityY(-300);
 		}
 
@@ -201,7 +219,7 @@ class MainScene extends Phaser.Scene {
 		} else {
 			if (y < 0) {
 				this.player.play(PLAYER_ANIMS.jump, true);
-			} else {	
+			} else {
 				this.player.play(PLAYER_ANIMS.fall, true);
 			}
 		}
@@ -209,7 +227,7 @@ class MainScene extends Phaser.Scene {
 
 	collectCoin(player, coin) {
 		coin.disableBody(true, true);
-
+		this.coinNoise.play();
 	}
 }
 
