@@ -2,6 +2,8 @@ import "./style.css";
 import Phaser from "phaser";
 
 const TILE_SIZE = 18;
+const WIDTH = 44 * TILE_SIZE;
+const HEIGHT = 33 * TILE_SIZE;
 
 const PLAYER_ANIMS = {
 	idle: "idle",
@@ -44,6 +46,8 @@ class MainScene extends Phaser.Scene {
 	}
 
 	create() {
+		this.physics.world.setBounds(0, 0, WIDTH, HEIGHT);
+
 		this.coinNoise = this.sound.add("coin-noise");
 		this.jumpNoise = this.sound.add("jump-noise", {
 			volume: 0.5,
@@ -53,10 +57,7 @@ class MainScene extends Phaser.Scene {
 			volume: 0.5,
 		});
 
-		this.music.play();
-
-		// object destructuring
-		const { height, width } = this.scale;
+		//this.music.play();
 
 		this.map = this.make.tilemap({ key: "map" });
 
@@ -99,8 +100,8 @@ class MainScene extends Phaser.Scene {
 		this.physics.add.collider(this.coins, this.coins);
 
 		this.player = this.physics.add.sprite(
-			width / 2,
-			height / 2,
+			WIDTH / 2,
+			HEIGHT / 2,
 			"robot",
 			"character_robot_idle.png"
 		);
@@ -185,6 +186,11 @@ class MainScene extends Phaser.Scene {
 			upArrow: Phaser.Input.Keyboard.KeyCodes.UP,
 			up: Phaser.Input.Keyboard.KeyCodes.W,
 		});
+
+		this.cameras.main.setBounds(0, 0, WIDTH, HEIGHT);
+		this.cameras.main.startFollow(this.player);
+		this.cameras.main.zoom = 3;
+
 	}
 
 	update() {
@@ -234,8 +240,8 @@ class MainScene extends Phaser.Scene {
 /** @type {Phaser.Types.Core.GameConfig} */
 const config = {
 	type: Phaser.WEBGL,
-	width: 44 * TILE_SIZE,
-	height: 33 * TILE_SIZE,
+	width: window.innerWidth,
+	height: window.innerHeight,
 	scene: [MainScene],
 	physics: {
 		default: "arcade",
