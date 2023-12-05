@@ -46,6 +46,11 @@ class MainScene extends Phaser.Scene {
 	}
 
 	create() {
+		let playerSpawn = {
+			x: WIDTH / 2,
+			y: HEIGHT / 2,
+		};
+
 		this.physics.world.setBounds(0, 0, WIDTH, HEIGHT);
 
 		this.coinNoise = this.sound.add("coin-noise");
@@ -60,6 +65,17 @@ class MainScene extends Phaser.Scene {
 		//this.music.play();
 
 		this.map = this.make.tilemap({ key: "map" });
+
+		// object layer from Tiled
+		const objectLayer = this.map.getObjectLayer("Objects");
+		objectLayer.objects.forEach((o) => {
+			const { x = 0, y = 0, name, width = 0, height = 0 } = o;
+			switch (name) {
+				case "player-spawn":
+					playerSpawn.x = x + width / 2;
+					playerSpawn.y = y + height / 2;
+			}
+		});
 
 		const marbleTiles = this.map.addTilesetImage("marble", "marble");
 		const rockTiles = this.map.addTilesetImage("rock", "rock");
@@ -100,8 +116,8 @@ class MainScene extends Phaser.Scene {
 		this.physics.add.collider(this.coins, this.coins);
 
 		this.player = this.physics.add.sprite(
-			WIDTH / 2,
-			HEIGHT / 2,
+			playerSpawn.x,
+			playerSpawn.y,
 			"robot",
 			"character_robot_idle.png"
 		);
@@ -190,7 +206,6 @@ class MainScene extends Phaser.Scene {
 		this.cameras.main.setBounds(0, 0, WIDTH, HEIGHT);
 		this.cameras.main.startFollow(this.player);
 		this.cameras.main.zoom = 3;
-
 	}
 
 	update() {
