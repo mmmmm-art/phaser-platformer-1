@@ -2,7 +2,7 @@ import "./style.css";
 import Phaser from "phaser";
 
 const TILE_SIZE = 18;
-const WIDTH = 44 * TILE_SIZE;
+const WIDTH = 88 * TILE_SIZE;
 const HEIGHT = 33 * TILE_SIZE;
 
 const PLAYER_ANIMS = {
@@ -100,7 +100,7 @@ class MainScene extends Phaser.Scene {
 		this.coins = this.physics.add.group({
 			key: "coin",
 			quantity: 12,
-			setXY: { x: 18 * 4, y: 0, stepX: 18 * 3 },
+			setXY: { x: TILE_SIZE * 4, y: 0, stepX: WIDTH / 11 },
 			setScale: { x: 0.25, y: 0.25 },
 		});
 
