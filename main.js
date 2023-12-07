@@ -3,7 +3,7 @@ import Phaser from "phaser";
 
 const TILE_SIZE = 18;
 const WIDTH = 88 * TILE_SIZE;
-const HEIGHT = 33 * TILE_SIZE;
+const HEIGHT = 40 * TILE_SIZE;
 
 const PLAYER_ANIMS = {
 	idle: "idle",
@@ -26,6 +26,9 @@ class MainScene extends Phaser.Scene {
 		this.coinNoise;
 		this.jumpNoise;
 		this.music;
+
+		this.enemySpawnPoints = [];
+		this.enemies;
 	}
 
 	preload() {
@@ -39,6 +42,7 @@ class MainScene extends Phaser.Scene {
 		this.load.tilemapTiledJSON("map", "tilesets/map.json");
 
 		this.load.image("coin", "coin.png");
+		this.load.image("enemy", "spikeBall.png");
 
 		this.load.audio("coin-noise", "coin.mp3");
 		this.load.audio("jump-noise", "jump.wav");
@@ -74,6 +78,13 @@ class MainScene extends Phaser.Scene {
 				case "player-spawn":
 					playerSpawn.x = x + width / 2;
 					playerSpawn.y = y + height / 2;
+					break;
+				case "enemy-spawn":
+					this.enemySpawnPoints.push({
+						x: x + width / 2,
+						y: y + height / 2,
+					});
+					break;
 			}
 		});
 
@@ -206,6 +217,18 @@ class MainScene extends Phaser.Scene {
 		this.cameras.main.setBounds(0, 0, WIDTH, HEIGHT);
 		this.cameras.main.startFollow(this.player);
 		this.cameras.main.zoom = 3;
+
+		this.enemies = this.physics.add.group();
+		this.physics.add.collider(this.enemies, platformLayer);
+		this.physics.add.collider(this.enemies, this.enemies);
+		this.physics.add.collider(this.enemies, this.coins);
+		this.physics.add.overlap(
+			this.player,
+			this.enemies,
+			this.hitPlayer,
+			undefined,
+			this
+		);
 	}
 
 	update() {
@@ -249,6 +272,23 @@ class MainScene extends Phaser.Scene {
 	collectCoin(player, coin) {
 		coin.disableBody(true, true);
 		this.coinNoise.play();
+
+		let spawn =
+			this.enemySpawnPoints[
+				Phaser.Math.Between(0, this.enemySpawnPoints.length - 1)
+			];
+		let enemy = this.enemies.create(spawn.x, spawn.y, "enemy");
+		enemy
+			.setCollideWorldBounds(true)
+			.setBounce(1)
+			.setVelocity(Phaser.Math.FloatBetween(-200, 200), 20)
+			.setCircle(60, 12, 14)
+			.setScale(0.25);
+	}
+
+	hitPlayer(player, enemy) {
+		this.physics.pause();
+		this.player.setTint(0x0000bb); // light blue death color for Hawkin
 	}
 }
 
