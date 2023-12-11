@@ -5,6 +5,10 @@ const TILE_SIZE = 18;
 const WIDTH = 88 * TILE_SIZE;
 const HEIGHT = 40 * TILE_SIZE;
 
+const restartDialog = document.getElementById("restart-dialog");
+const restartButton = document.getElementById("restart-button");
+const scoreSpan = document.getElementById("score-span");
+
 const PLAYER_ANIMS = {
 	idle: "idle",
 	walk: "walk",
@@ -29,6 +33,8 @@ class MainScene extends Phaser.Scene {
 
 		this.enemySpawnPoints = [];
 		this.enemies;
+
+		this.score = 0;
 	}
 
 	preload() {
@@ -216,7 +222,7 @@ class MainScene extends Phaser.Scene {
 
 		this.cameras.main.setBounds(0, 0, WIDTH, HEIGHT);
 		this.cameras.main.startFollow(this.player);
-		this.cameras.main.zoom = 3;
+		this.cameras.main.zoom = 1.5;
 
 		this.enemies = this.physics.add.group();
 		this.physics.add.collider(this.enemies, platformLayer);
@@ -270,6 +276,8 @@ class MainScene extends Phaser.Scene {
 	}
 
 	collectCoin(player, coin) {
+		this.score++;
+
 		coin.disableBody(true, true);
 		this.coinNoise.play();
 
@@ -289,6 +297,8 @@ class MainScene extends Phaser.Scene {
 	hitPlayer(player, enemy) {
 		this.physics.pause();
 		this.player.setTint(0x0000bb); // light blue death color for Hawkin
+
+		restartDialog.showModal();
 	}
 }
 
@@ -308,3 +318,8 @@ const config = {
 };
 
 const game = new Phaser.Game(config);
+
+restartButton.addEventListener("click", () => {
+	game.scene.start("main-scene");
+	restartDialog.close();
+});
