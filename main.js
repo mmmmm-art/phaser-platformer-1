@@ -18,6 +18,38 @@ const PLAYER_ANIMS = {
 	fall: "fall",
 };
 
+const events = new Phaser.Events.EventEmitter();
+const COIN_COLLECTED_EVENT = "coin-collected";
+
+class UiScene extends Phaser.Scene {
+	constructor() {
+		super("ui-scene");
+
+		this.scoreText;
+	}
+
+	preload() {
+		this.load.image("coin", "coin.png");
+	}
+
+	create() {
+		let coin = this.add.image(32, 32, "coin");
+		coin.setScale(0.5);
+
+		this.scoreText = this.add.text(55, 10, "0", {
+			color: "#000",
+			fontSize: 40,
+			fontFamily: "fantasy, arial, sans-serif",
+		});
+
+		events.addListener(COIN_COLLECTED_EVENT, this.handleCoinCollected, this);
+	}
+
+	handleCoinCollected(score) {
+		this.scoreText.setText(score);
+	}
+}
+
 class MainScene extends Phaser.Scene {
 	constructor() {
 		super("main-scene");
@@ -34,6 +66,11 @@ class MainScene extends Phaser.Scene {
 		this.enemySpawnPoints = [];
 		this.enemies;
 
+		this.score = 0;
+	}
+
+	init() {
+		this.scene.launch("ui-scene");
 		this.score = 0;
 	}
 
@@ -277,6 +314,7 @@ class MainScene extends Phaser.Scene {
 
 	collectCoin(player, coin) {
 		this.score++;
+		events.emit(COIN_COLLECTED_EVENT, this.score);
 
 		coin.disableBody(true, true);
 		this.coinNoise.play();
@@ -307,7 +345,7 @@ const config = {
 	type: Phaser.WEBGL,
 	width: window.innerWidth,
 	height: window.innerHeight,
-	scene: [MainScene],
+	scene: [MainScene, UiScene],
 	physics: {
 		default: "arcade",
 		arcade: {
