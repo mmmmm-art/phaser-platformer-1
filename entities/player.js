@@ -11,6 +11,7 @@ const PLAYER_ANIMS = {
 	fall: "fall",
 };
 
+
 export class Player {
 	/**
 	 * @param {Phaser.Types.Physics.Arcade.SpriteWithDynamicBody} sprite

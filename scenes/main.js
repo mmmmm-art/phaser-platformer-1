@@ -13,7 +13,7 @@ import {
 import { CoinsGroup } from "../entities/coins";
 import { EnemiesGroup } from "../entities/enemies";
 import { Player } from "../entities/player";
-
+restartDialog.showModal();
 export class MainScene extends Phaser.Scene {
 	constructor() {
 		super("main-scene");

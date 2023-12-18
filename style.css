@@ -32,5 +32,5 @@ canvas {
 
 ::backdrop {
 	opacity: 0.75;
-	background-image: linear-gradient(0deg, black, dodgerblue, black);
+	background-image: radial-gradient(farthest-side, red, orange, yellow, yellowgreen, green, cyan, blue, indigo, violet);
 }
